@@ -1,0 +1,323 @@
+@host =http://localhost:3000
+
+
+### ----------GET PRODUCTS------------
+
+Get {{host}}/api
+
+### ALL PRODUCTS FOR NON-ADMIN
+
+GET {{host}}/api/products
+
+### RETURN ALL PRODUCT ATTRIBUTES (ALSO STOCK)
+
+GET {{host}}/api/products
+x-token: admin2024
+
+### FILTER BY NAME AND CATEGORY FOR NON-ADMIN
+
+GET {{host}}/api/products?category=Fruit&name=Watermelon
+
+### FILTER BY PRICE RANGE FOR NON-ADMIN
+
+GET {{host}}/api/products?min=13&max=15
+
+
+### ----------GET PRODUCTS BY ID------------
+
+### GET PRODUCT BY ID (VALID ID AND NON-ADMIN)
+GET {{host}}/api/products/123
+### GET PRODUCT BY ID (VALID ID) (ADMIN)
+GET {{host}}/api/products/123
+x-token: admin2024
+### GET PRODUCT BY ID (INVALID ID)
+GET {{host}}/api/products/das
+
+
+### ----------POST PRODUCTS------------
+
+### ADD A PRODUCT OK (ADMIN)
+
+POST {{host}}/api/products
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "pineapple",
+    "description": "Yellow pineapple",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 15.40,
+    "stock": 2
+}
+
+### ADD A PRODUCT (MISSING PROPERTIES)
+
+POST {{host}}/api/products
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "product1"
+}
+
+
+### ADD A PRODUCT (ADMIN) (REPEATED NAME)
+POST {{host}}/api/products
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "pineapple",
+    "description": "description1",
+    "unit": "unit1",
+    "category": "category1",
+    "pricePerUnit": 12.34,
+    "stock": 10
+}
+
+### ADD A PRODUCT (MISSING X-TOKEN)
+POST {{host}}/api/products
+Content-Type: application/json
+
+{
+    "imageUrl": "image url",
+    "name": "product5",
+    "description": "description1",
+    "unit": "unit1",
+    "category": "category1",
+    "pricePerUnit": 12.34,
+    "stock": 10
+}
+
+
+### ADD A PRODUCT (X-TOKEN NOT ADMIN)
+POST {{host}}/api/products
+Content-Type: application/json
+x-token: notadmin
+
+{
+    "imageUrl": "image url",
+    "name": "product5",
+    "description": "description1",
+    "unit": "unit1",
+    "category": "category1",
+    "pricePerUnit": 12.34,
+    "stock": 10
+}
+### ----------PUT PRODUCTS------------
+
+### UPDATE PRODUCT OK (ADMIN)
+PUT {{host}}/api/products/124
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "Watermelon",
+    "description": "A juicy watermelon",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 22,
+    "stock": 10
+}
+
+### UPDATE PRODUCT (MISSING PROPERTIES)
+PUT {{host}}/api/products/124
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "name": "product5"
+}
+
+
+
+### UPDATE PRODUCT (ADMIN) (REPEATED NAME)
+PUT {{host}}/api/products/123
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "Watermelon",
+    "description": "A juicy watermelon",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 13,
+    "stock": 23
+}
+
+### UPDATE PRODUCT (MISSING X-TOKEN)
+PUT {{host}}/api/products/abcd
+Content-Type: application/json
+
+{
+    "imageUrl": "image url",
+    "name": "Watermelon",
+    "description": "A juicy watermelon",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 13,
+    "stock": 23
+}
+
+### UPDATE PRODUCT (X-TOKEN NOT ADMIN)
+PUT {{host}}/api/products/abcd
+Content-Type: application/json
+x-token: notadmin
+
+{
+    "imageUrl": "image url",
+    "name": "Watermelon",
+    "description": "A juicy watermelon",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 13,
+    "stock": 23
+}
+
+### ----------DELETE PRODUCTS------------
+
+### DELETE PRODUCT OK (ADMIN)
+DELETE {{host}}/api/products/125
+x-token: admin2024
+
+### DELETE PRODUCT (MISSING X-TOKEN)
+DELETE {{host}}/api/products/abcd
+
+### DELETE PRODUCT (X-TOKEN NOT ADMIN)
+DELETE {{host}}/api/products/abcd
+x-token: notadmn
+
+### ----------POST CART------------
+
+### ADD TO CART (VALID)
+POST {{host}}/api/cart
+content-type: application/json
+x-user: userName
+
+[
+    {
+        "uuid": "123",
+        "amount": 3
+    },
+    {
+        "uuid": "124",
+        "amount": 6
+    }
+]
+
+### ADD TO CART (MISSING X-USER)
+POST {{host}}/api/cart
+content-type: application/json
+
+[
+    {
+        "uuid": "abcd",
+        "amount": 3
+    },
+    {
+        "uuid": "abcd",
+        "amount": 2
+    }
+]
+
+### ADD TO CART (EXISTENT USER)
+POST {{host}}/api/cart
+content-type: application/json
+x-user: userName
+
+[
+    {
+        "uuid": "125",
+        "amount": 3
+    },
+    {
+        "uuid": "124",
+        "amount": 1
+    }
+]
+### ADD TO CART (INVALID AMOUNT)
+POST {{host}}/api/cart
+content-type: application/json
+x-user: userName
+
+[
+    {
+        "uuid": "123",
+        "amount": 3
+    },
+    {
+        "uuid": "124",
+        "amount": -1
+    }
+]
+### ADD TO CART (INSUFFICIENT STOCK)
+POST {{host}}/api/cart
+content-type: application/json
+x-user: userName
+
+[
+    {
+        "uuid": "123",
+        "amount": 3
+    },
+    {
+        "uuid": "124",
+        "amount": 99
+    }
+]
+ 
+### ----------GET CART------------
+
+### GET CART (VALID)
+
+Get {{host}}/api/cart
+x-user: userName
+
+### GET CART WITH INSUFFICIENT STOCK
+    ### MODIFY STOCK OF PRODUCT
+PUT {{host}}/api/products/124
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "Watermelon",
+    "description": "A juicy watermelon",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 10,
+    "stock": 1
+}
+
+### GET CART 
+GET {{host}}/api/cart
+x-user: userName
+### GET CART WITH 0 STOCK
+### MODIFY STOCK OF PRODUCT
+
+
+PUT {{host}}/api/products/124
+Content-Type: application/json
+x-token: admin2024
+
+{
+    "imageUrl": "image url",
+    "name": "Watermelon",
+    "description": "A juicy watermelon",
+    "unit": "kg",
+    "category": "Fruit",
+    "pricePerUnit": 10,
+    "stock": 0
+}
+### GET CART 
+
+GET {{host}}/api/cart
+x-user: userName
+### GET CART (MISSING X-USER)
+GET {{host}}/api/cart
